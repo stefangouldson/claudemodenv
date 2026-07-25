@@ -32,7 +32,7 @@
 
 .EXAMPLE
   pwsh build/Test-RecordYaml.ps1
-  pwsh build/Test-RecordYaml.ps1 -Path ExampleMod/ExampleModESP
+  pwsh build/Test-RecordYaml.ps1 -Path src/ExampleMod/ExampleModESP
 #>
 [CmdletBinding()]
 param(

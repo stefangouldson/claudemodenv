@@ -11,7 +11,7 @@ into a Mod Organizer 2 modlist and tested.
 ## Inputs to collect
 
 - **Mod name** → `<ModName>` (used for the folder and the `.esp`).
-- Which scripts to include (default: everything in `<ModName>/Scripts/compiled/`).
+- Which scripts to include (default: everything in `src/<ModName>/Scripts/compiled/`).
 - Whether to ship `.psc` **source** alongside (recommended for your own mods; lets others rebuild).
 
 ## Target layout
@@ -19,8 +19,8 @@ into a Mod Organizer 2 modlist and tested.
 ```
 dist/<ModName>/
   <ModName>.esp            # from spriggit-deserialize
-  Scripts/*.pex            # from <ModName>/Scripts/compiled/
-  Source/Scripts/*.psc     # optional, from <ModName>/Scripts/source/
+  Scripts/*.pex            # from src/<ModName>/Scripts/compiled/
+  Source/Scripts/*.psc     # optional, from src/<ModName>/Scripts/source/
 ```
 
 ## Steps
@@ -28,7 +28,7 @@ dist/<ModName>/
 1. **Build the plugin** if not already current — run the **spriggit-deserialize** skill to produce
    `<ModName>.esp` from the YAML.
 2. **Compile scripts** if not already current — run the **papyrus-compile** skill so
-   `<ModName>/Scripts/compiled/` holds fresh `.pex`.
+   `src/<ModName>/Scripts/compiled/` holds fresh `.pex`.
 3. **Assemble** `dist/<ModName>/` (PowerShell):
 
 ```powershell
@@ -60,6 +60,6 @@ After `mod-deploy` reports success, these remain manual:
 ## Notes
 
 - `dist/` is gitignored — it's fully derivable from the committed Spriggit YAML +
-  `<ModName>/Scripts/source/`.
+  `src/<ModName>/Scripts/source/`.
 - Keep the `.esp` name, its ModKey in the Spriggit YAML, and the `dist` filename consistent.
 - For a FOMOD-installable release archive rather than a loose test build, use `build/build.ps1`.

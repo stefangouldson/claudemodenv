@@ -17,8 +17,9 @@ skill or edit `tools.json`.
 ## Inputs to collect
 
 1. **Plugin path** (`--InputPath`) — e.g. `MyMod.esp`. Ask if not given.
-2. **Output folder** (`--OutputPath`) — a *dedicated* folder, conventionally `./<modFolderName>`
-   matching the plugin name (e.g. `./MyMod`). It must be a folder used only for this plugin.
+2. **Output folder** (`--OutputPath`) — a *dedicated* folder under `src/`, conventionally
+   `./src/<ModName>/<modFolderName>` (e.g. `./src/MyMod/MyModESP`). All mod content lives under
+   `src/`; it must be a folder used only for this plugin.
 
 ## Steps
 
@@ -31,7 +32,7 @@ skill or edit `tools.json`.
 . ".claude/config/tools.ps1"
 & (Assert-Tool $Tools.spriggitCli 'spriggitCli') serialize `
   --InputPath   "<MyMod.esp>" `
-  --OutputPath  "./<modFolderName>" `
+  --OutputPath  "./src/<ModName>/<modFolderName>" `
   --GameRelease $Tools.spriggit.gameRelease `
   --PackageName $Tools.spriggit.packageName `
   --PackageVersion $Tools.spriggit.packageVersion

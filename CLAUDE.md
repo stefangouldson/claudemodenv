@@ -45,17 +45,21 @@ in xEdit/CK to verify before shipping.
 ## Folder map
 
 ```
-<ModName>/
-  <ModName>ESP/            # Spriggit YAML — COMMITTED, source of truth
-  Scripts/source/*.psc     # Papyrus source — COMMITTED
-  Scripts/compiled/*.pex   # COMMITTED via a .gitignore exception (CI can't compile Papyrus)
+src/                       # EVERY mod lives here — one folder per mod, add as many as you like
+  <ModName>/
+    <ModName>ESP/          # Spriggit YAML — COMMITTED, source of truth
+    Scripts/source/*.psc   # Papyrus source — COMMITTED
+    Scripts/compiled/*.pex # COMMITTED via a .gitignore exception (CI can't compile Papyrus)
 build/                     # build.ps1 + manifest.json + committed FOMOD trees
 arch-docs/                 # design docs, record-pattern guide, generated build report
 reference/                 # gitignored — vanilla/third-party decompiles, LOOKUP ONLY
 modlist/                   # gitignored — an installed MO2 instance, hundreds of GB
 ```
 
-Only your own mod folders, `build/`, `arch-docs/`, `.claude/` and the root configs are committed.
+`src/` is the only place mod content goes. A repo can hold several mods side by side — a main
+plugin and its compatibility patches, say — each its own `src/<ModName>/` folder with its own
+`build/manifest.json` release entry. Only `src/`, `build/`, `arch-docs/`, `.claude/` and the root
+configs are committed.
 
 ## Guardrails — how to work in this repo
 

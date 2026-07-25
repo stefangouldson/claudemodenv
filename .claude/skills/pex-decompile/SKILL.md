@@ -27,7 +27,7 @@ Turn compiled Papyrus bytecode into human-readable `.psc` source you can edit, t
 ```
 
 2. Choose the output dir by intent:
-   - Scripts **you will edit / own** → `<ModName>/Scripts/source/` (committed source of truth).
+   - Scripts **you will edit / own** → `src/<ModName>/Scripts/source/` (committed source of truth).
    - **Reference-only** lookups → `reference/<name>/` (gitignored).
 
 ## CRITICAL: decompiled source is a reconstruction
@@ -42,6 +42,6 @@ For non-trivial cleanup and compile-error fixing, hand off to the **papyrus-scri
 
 ## Notes
 
-- Commit the `.psc` source in `<ModName>/Scripts/source/`. `.pex` are gitignored by default;
+- Commit the `.psc` source in `src/<ModName>/Scripts/source/`. `.pex` are gitignored by default;
   a plugin that ships scripts opts its `Scripts/compiled/` folder back in (see `.gitignore`).
 - If you only have a `.bsa`/`.ba2`, run **bsa-extract** first to get the `.pex` files.

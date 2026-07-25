@@ -28,8 +28,8 @@ persist extra API import dirs in that config's `importDirs` array.
 
 ## Folder layout
 
-- `<ModName>/Scripts/source/` — `.psc` you author or clean (committed source of truth).
-- `<ModName>/Scripts/compiled/` — `.pex` build output. Gitignored by default, but committed
+- `src/<ModName>/Scripts/source/` — `.psc` you author or clean (committed source of truth).
+- `src/<ModName>/Scripts/compiled/` — `.pex` build output. Gitignored by default, but committed
   via a `.gitignore` exception for any plugin that ships scripts, because CI cannot run the
   Creation Kit compiler. Recompile and re-commit whenever the `.psc` changes.
 - `dist/<ModName>/` — packaged loose mod (gitignored).
@@ -52,18 +52,18 @@ A decompiled script that *compiles* is still unverified — require an in-game t
   it in `CLAUDE.md`.
 - **Flags-file errors** → ensure `-f="TESV_Papyrus_Flags.flg"` and that the game source (which
   contains it) is on the import path.
-- **Cannot find your own scripts** → put `<ModName>/Scripts/source` first in `-i`.
+- **Cannot find your own scripts** → put `src/<ModName>/Scripts/source` first in `-i`.
 - Always read the compiler's error output **verbatim**; fix the first error first (later ones often cascade).
 
 ## Working loop
 
-1. Get source: extract (`.bsa`) → decompile (`.pex`) into `<ModName>/Scripts/source/`, or write new `.psc`.
+1. Get source: extract (`.bsa`) → decompile (`.pex`) into `src/<ModName>/Scripts/source/`, or write new `.psc`.
 2. Clean/edit the `.psc`.
 3. Compile (`papyrus-compile`); fix errors; repeat until clean.
 4. Package (`package-mod`) and tell the user to test in an MO2 modlist.
 
 ## Hard rules
 
-- Edit `.psc`, never `.pex`. Commit `<ModName>/Scripts/source/`; never commit `dist/`.
+- Edit `.psc`, never `.pex`. Commit `src/<ModName>/Scripts/source/`; never commit `dist/`.
 - Don't run `serialize`/`deserialize` or overwrite plugin YAML — that's the record-editor's / skills' job.
 - If a fix requires changing plugin records (not scripts), hand off to **spriggit-record-editor**.

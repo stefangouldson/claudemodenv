@@ -3,7 +3,7 @@
 **You probably don't need this file.** This repository *is* the template: click **Use this
 template** on GitHub, or `git clone` it, and you have the whole workspace — skills, subagents,
 config template, build pipeline, CI, and a working example mod. Then run `/mod-new-plugin` to
-scaffold your own plugin and delete `ExampleMod/`.
+scaffold your own plugin and delete `src/ExampleMod/`.
 
 This file is the fallback for the cases where copying the repo isn't an option:
 
@@ -106,7 +106,7 @@ Thumbs.db
 
 # Papyrus & packaging build artifacts — derivable
 # Compiled Papyrus is ignored BY DEFAULT. A plugin that ships scripts opts its compiled
-# folder back in with a "!<ModName>/Scripts/compiled/" exception, because cloud CI cannot
+# folder back in with a "!src/<ModName>/Scripts/compiled/" exception, because cloud CI cannot
 # run the Creation Kit compiler and must package the committed .pex as-is.
 *.pex
 /dist/
@@ -121,14 +121,16 @@ reference decompiles, modlists, and build artifacts are ignored. Ask which folde
 Enforce **LF** line endings and UTF-8 for `*.yaml`/`*.psc` (Spriggit YAML uses LF).
 
 ### Folder layout (document; create on demand)
+Every mod lives under a single top-level `src/` folder, one subfolder per mod, so a repo can carry
+a main plugin and its compatibility patches side by side without cluttering the root:
 ```
-<modFolderName>/                         # your plugin as YAML — COMMITTED (source of truth)
+src/<ModName>/<modFolderName>/           # your plugin as YAML — COMMITTED (source of truth)
   RecordData.yaml                        # header: ModKey, GameRelease, masters, author, Stats.Version
   spriggit-meta.json                     # { PackageName, Version, Release, ModKey }
   <RecordType>/                          # one folder per record type (Activators, MagicEffects, …)
     <EditorID> - <FormID>_<PluginName>.esp.yaml   # naming fixed by Spriggit
-<modFolderName>/Scripts/source/*.psc     # your Papyrus source — COMMITTED
-<modFolderName>/Scripts/compiled/*.pex   # build output — COMMITTED via a .gitignore exception
+src/<ModName>/Scripts/source/*.psc       # your Papyrus source — COMMITTED
+src/<ModName>/Scripts/compiled/*.pex     # build output — COMMITTED via a .gitignore exception
 reference/<name>/                        # third-party/vanilla decompiles — gitignored, lookup only
 dist/<ModName>/                          # packaged loose mod for MO2 testing — gitignored
 ```

@@ -45,7 +45,7 @@ you never run `serialize`/`deserialize`.
    - a Script-archetype MagicEffect with an empty `VirtualMachineAdapter` — flag as display-only so
      the author confirms that is intentional;
    - a `ScriptObjectProperty` whose `Name` has no matching property in the corresponding `.psc`
-     under `<ModName>/Scripts/source/` (silently `None` at runtime);
+     under `src/<ModName>/Scripts/source/` (silently `None` at runtime);
    - a `.psc` in `Scripts/source/` with no corresponding `.pex` in `Scripts/compiled/`, or a `.pex`
      older than its `.psc` (stale committed script — CI cannot detect this).
 

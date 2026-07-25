@@ -19,7 +19,7 @@ never binary plugins**.
 ## Folder & file conventions (fixed by Spriggit)
 
 ```
-<modFolderName>/
+src/<ModName>/<modFolderName>/          # all mod content lives under src/
   RecordData.yaml        # plugin header: ModKey, GameRelease, masters, author, Stats.Version
   spriggit-meta.json     # { PackageName, Version, Release, ModKey }
   <RecordType>/          # one folder per record type: Activators, MagicEffects, Quests, Perks, ...

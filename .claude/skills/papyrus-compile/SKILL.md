@@ -34,17 +34,17 @@ file) are available as imports:
 
 ## Steps
 
-1. Compile all source in `<ModName>/Scripts/source/` into `<ModName>/Scripts/compiled/`. Paths come from the config;
+1. Compile all source in `src/<ModName>/Scripts/source/` into `src/<ModName>/Scripts/compiled/`. Paths come from the config;
    `$Tools.importDirs` (extra API source dirs) are appended automatically:
 
 ```powershell
 . ".claude/config/tools.ps1"
 $compiler = Assert-Tool $Tools.papyrusCompiler 'papyrusCompiler'
-$imports  = @('<ModName>/Scripts/source', $Tools.gameSourceScripts) + @($Tools.importDirs)
-& $compiler "<ModName>/Scripts/source" -all `
+$imports  = @('src/<ModName>/Scripts/source', $Tools.gameSourceScripts) + @($Tools.importDirs)
+& $compiler "src/<ModName>/Scripts/source" -all `
   -f="$($Tools.papyrusFlags)" `
   -i="$($imports -join ';')" `
-  -o="<ModName>/Scripts/compiled" `
+  -o="src/<ModName>/Scripts/compiled" `
   -optimize
 ```
 
@@ -62,7 +62,7 @@ it to `-i` with `;` separators. Persist it by adding the dir to **`importDirs`**
 "importDirs": ["C:/path/to/SKSE/Source/Scripts", "C:/path/to/SkyUI/Source/Scripts"]
 ```
 
-Put `<ModName>/Scripts/source` first so your own scripts resolve each other (the build block already does).
+Put `src/<ModName>/Scripts/source` first so your own scripts resolve each other (the build block already does).
 Also note the import in `CLAUDE.md`'s per-project imports table once known.
 
 ## Notes

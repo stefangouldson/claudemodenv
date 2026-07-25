@@ -39,7 +39,7 @@ decompiled and edited.
 ## Where to extract
 
 - Scripts from **your own** mod that you intend to edit → a working folder, then decompile into
-  `<ModName>/Scripts/source/` (see the `pex-decompile` skill).
+  `src/<ModName>/Scripts/source/` (see the `pex-decompile` skill).
 - Scripts from **someone else's** mod, for reference/lookup only → `reference/<name>/`
   (gitignored). Never commit third-party assets.
 

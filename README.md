@@ -131,7 +131,7 @@ keep it in the gitignored `modlists/` folder.
 
 ## The example mod
 
-`ExampleMod/` is a complete, working mod kept deliberately tiny — four records and one script — so
+`src/ExampleMod/` is a complete, working mod kept deliberately tiny — four records and one script — so
 that a fresh clone builds and runs before you have written anything. It masters onto **`Skyrim.esm`
 only**, so it works on a bare install with no other mods present.
 
@@ -149,7 +149,7 @@ the **Example Blade** in your inventory, a forge recipe for it (2 steel ingots +
 perk required), and blacksmith vendors stocking it.
 
 **To start your own mod:** run **`/mod-new-plugin`**, which scaffolds the YAML folder, the manifest
-entry and the FOMOD stub for you. Then delete `ExampleMod/`, its `build/releases/Example Mod/` tree,
+entry and the FOMOD stub for you. Then delete `src/ExampleMod/`, its `build/releases/Example Mod/` tree,
 its `build/manifest.json` entry and its `.gitignore` exception — or keep it around as a reference
 until you no longer need it.
 
@@ -158,13 +158,13 @@ until you no longer need it.
 | Committed (your authored work)          | Ignored (`.gitignore`)                                   |
 |-----------------------------------------|----------------------------------------------------------|
 | Your own mod's YAML folder(s)           | Binary plugins (`*.esp/*.esm/*.esl`)                     |
-| Papyrus source `<ModName>/Scripts/source/*.psc` | Compiled scripts (`*.pex`)\*, archives (`*.bsa`/`*.ba2`) |
+| Papyrus source `src/<ModName>/Scripts/source/*.psc` | Compiled scripts (`*.pex`)\*, archives (`*.bsa`/`*.ba2`) |
 | `.spriggit`, configs, README, CLAUDE.md | Build output (`dist/`, `build/staging/`, `build/dist/`)  |
 |                                         | Vanilla/third-party reference decompiles (`/reference/`) |
 |                                         | Editor/venv (`.vscode/`, `.venv/`)                       |
 
 **You commit source, not build artifacts.** Your mod's YAML folder and
-`<ModName>/Scripts/source/*.psc` are the source of truth. Everything derivable from them — the
+`src/<ModName>/Scripts/source/*.psc` are the source of truth. Everything derivable from them — the
 `.esp` and the packaged `dist/` mod — is ignored, along with large third-party/vanilla reference
 decompiles.
 
@@ -178,7 +178,7 @@ artifact in the repo and it exists for that single reason.
 Created automatically when you serialize a plugin:
 
 ```
-<modFolderName>/
+src/<ModName>/<modFolderName>/
   RecordData.yaml        # plugin header: ModKey, GameRelease, masters, author, Stats.Version
   spriggit-meta.json     # { PackageName, Version, Release, ModKey }
   <RecordType>/          # one folder per record type: Activators, MagicEffects, Quests, Perks, ...
@@ -279,15 +279,20 @@ check `$Tools.gameSourceScripts` first):
 ### Folder layout
 
 ```
-<ModName>/
-  <ModName>ESP/            # Spriggit YAML — COMMITTED (source of truth)
-  Scripts/source/*.psc     # .psc you author or clean — COMMITTED
-  Scripts/compiled/*.pex   # build output — COMMITTED via a .gitignore exception (see above)
+src/                       # EVERY mod lives here — one folder per mod
+  <ModName>/
+    <ModName>ESP/          # Spriggit YAML — COMMITTED (source of truth)
+    Scripts/source/*.psc   # .psc you author or clean — COMMITTED
+    Scripts/compiled/*.pex # build output — COMMITTED via a .gitignore exception (see above)
 dist/<ModName>/            # packaged loose mod (Data layout) — gitignored
   <ModName>.esp
   Scripts/*.pex
   Source/Scripts/*.psc
 ```
+
+`src/` is the only place mod content goes, and it holds as many mods as you need side by side —
+a main plugin plus its compatibility patches, for instance. Each gets its own `src/<ModName>/`
+folder and its own release entry in `build/manifest.json`; `/mod-new-plugin` sets both up.
 
 ### Testing (manual, in an MO2 modlist)
 
@@ -316,7 +321,7 @@ build time; on a `v*` tag: a normal Release named for the tag) → regenerate `a
 
 **CI does NOT compile Papyrus.** The Creation Kit compiler + licensed base-game script source can't
 run in the cloud, so each script-shipping plugin's compiled scripts are **committed** at
-`<ModName>/Scripts/compiled/*.pex` (an explicit exception in `.gitignore`).
+`src/<ModName>/Scripts/compiled/*.pex` (an explicit exception in `.gitignore`).
 
 > **Contract:** whenever you change a `.psc`, recompile (`/papyrus-compile`) and **commit the
 > updated `.pex`** — otherwise the packaged addon ships stale scripts. `build/build.ps1` fails the

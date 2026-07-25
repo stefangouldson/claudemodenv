@@ -14,7 +14,7 @@ Rebuild the binary plugin from the edited YAML. Run this after editing records.
 
 ## Inputs to collect
 
-1. **YAML folder** (`--InputPath`) — the Spriggit text folder, e.g. `./MyMod`.
+1. **YAML folder** (`--InputPath`) — the Spriggit text folder under `src/`, e.g. `./src/MyMod/MyModESP`.
 2. **Output plugin** (`--OutputPath`) — the plugin to (re)build, e.g. `MyMod.esp`.
 
 ## Steps
@@ -25,7 +25,7 @@ Rebuild the binary plugin from the edited YAML. Run this after editing records.
 ```powershell
 . ".claude/config/tools.ps1"
 & (Assert-Tool $Tools.spriggitCli 'spriggitCli') deserialize `
-  --InputPath  "./<modFolderName>" `
+  --InputPath  "./src/<ModName>/<modFolderName>" `
   --OutputPath "<MyMod.esp>"
 ```
 

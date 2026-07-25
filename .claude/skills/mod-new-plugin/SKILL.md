@@ -16,7 +16,8 @@ plugin builds and then misbehaves in-game, which is expensive to discover.
 
 1. **Plugin filename** — e.g. `MyMod.esp`. This becomes the `ModKey` and must match exactly,
    including case and extension, everywhere it appears.
-2. **Folder name** — conventionally `<ModName>/<ModName>ESP/`. See the layout below.
+2. **Folder name** — conventionally `src/<ModName>/<ModName>ESP/`. Mod content **always** goes under
+   `src/`; never scaffold a mod folder at the repo root. See the layout below.
 3. **ESL-flagged?** Default **yes** for a small mod or a patch (`Flags: [Small]`), which restricts
    FormIDs to `0x800–0xFFF`. Say so explicitly when confirming, because it constrains every FormID
    allocated afterwards.
@@ -30,7 +31,7 @@ plugin builds and then misbehaves in-game, which is expensive to discover.
 ## Layout to create
 
 ```
-<ModName>/
+src/<ModName>/
   <ModName>ESP/
     RecordData.yaml        # the plugin header
     spriggit-meta.json     # { PackageName, Version, Release, ModKey }
@@ -43,7 +44,7 @@ them as records appear. Do not scaffold empty ones.
 
 ## Steps
 
-1. **Write `<ModName>ESP/RecordData.yaml`.** Fill `ModKey`, the ESL flag, and the masters from the
+1. **Write `src/<ModName>/<ModName>ESP/RecordData.yaml`.** Fill `ModKey`, the ESL flag, and the masters from the
    answers above. Set a real `Stats.Version` — SSE Wrye Bash rejects `0.85`-style versions, so use
    `1.0` or similar:
 
@@ -65,7 +66,7 @@ them as records appear. Do not scaffold empty ones.
      INTV: 1
    ```
 
-2. **Write `<ModName>ESP/spriggit-meta.json`** — values must match `.spriggit` in the repo root and
+2. **Write `src/<ModName>/<ModName>ESP/spriggit-meta.json`** — values must match `.spriggit` in the repo root and
    the `ModKey` above. `build/build.ps1` refuses to build a folder without this file:
 
    ```json
@@ -84,9 +85,9 @@ them as records appear. Do not scaffold empty ones.
    {
      "name":        "<Release Name>",          // must match build/releases/<name>/ exactly
      "archiveName": "<Release Name>",          // -> build/dist/<archiveName>.7z
-     "scripts":     { "from": "<ModName>/Scripts/compiled", "to": "Scripts" },  // omit if no scripts
+     "scripts":     { "from": "src/<ModName>/Scripts/compiled", "to": "Scripts" },  // omit if no scripts
      "plugins": [
-       { "yamlSource": "<ModName>/<ModName>ESP", "dest": "<MyMod.esp>" }
+       { "yamlSource": "src/<ModName>/<ModName>ESP", "dest": "<MyMod.esp>" }
      ]
    }
    ```
@@ -99,8 +100,8 @@ them as records appear. Do not scaffold empty ones.
    compiler and packages the committed `.pex` as-is:
 
    ```gitignore
-   !<ModName>/Scripts/compiled/
-   !<ModName>/Scripts/compiled/*.pex
+   !src/<ModName>/Scripts/compiled/
+   !src/<ModName>/Scripts/compiled/*.pex
    ```
 
 5. **Create the FOMOD stub** at `build/releases/<Release Name>/fomod/` — `info.xml` and

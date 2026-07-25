@@ -92,7 +92,7 @@ so the next deploy needs no questions.
 ## Notes
 
 - `dist/` is gitignored — it is fully derivable from the committed Spriggit YAML plus
-  `<ModName>/Scripts/source/`.
+  `src/<ModName>/Scripts/source/`.
 - **A clean build and a successful deploy still prove nothing about behaviour.** See
   `arch-docs/skyrim-record-patterns.md` for record shapes that install perfectly and do nothing.
 - For a release archive rather than a loose test deploy, use `build/build.ps1`, which produces the
