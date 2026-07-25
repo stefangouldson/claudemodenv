@@ -3,10 +3,12 @@
   Build this workspace's release archives from Spriggit YAML + committed .pex.
 
 .DESCRIPTION
-  Data-driven by build/manifest.json - the script contains no mod-specific names. For each release:
-    1. copies the committed fomod/ into a clean build/staging/<release>/
-    2. deserializes each plugin's YAML -> <release>/<dest>.esp via the Spriggit CLI
-    3. copies the release's committed compiled .pex into its Scripts/ folder
+  Data-driven by build/manifest.json - the script contains no mod-specific names. build/staging/<release>/
+  is a committed tree: only its fomod/ subfolder is source (checked into git); the rest is derived and
+  regenerated on every run. For each release:
+    1. verifies the committed build/staging/<release>/fomod/ exists (does not touch it)
+    2. deserializes each plugin's YAML -> <release>/<dest>.esp via the Spriggit CLI (overwriting any stale copy)
+    3. copies the release's committed compiled .pex into its Scripts/ folder (overwriting any stale copy)
     4. compresses build/staging/<release>/ -> build/dist/<archiveName>.7z
   Then writes a markdown build report to arch-docs/build-report.md.
 
@@ -160,7 +162,7 @@ $manifest = Get-Content $manifestPath -Raw | ConvertFrom-Json
 function Test-FomodParity {
     $ok = $true
     foreach ($rel in $manifest.releases) {
-        $fomod = Join-Path $RepoRoot (Join-Path (Join-Path 'build/releases' $rel.name) 'fomod/ModuleConfig.xml')
+        $fomod = Join-Path $RepoRoot (Join-Path (Join-Path 'build/staging' $rel.name) 'fomod/ModuleConfig.xml')
         if (-not (Test-Path $fomod)) { Write-Warning "No ModuleConfig.xml for '$($rel.name)'"; continue }
         [xml]$xml = Get-Content $fomod -Raw
         $fomodEsps = $xml.SelectNodes('//file') |
@@ -207,8 +209,8 @@ Write-Host "7-Zip        : $sevenZip"
 
 $stagingAbs = Join-Path $RepoRoot $OutDir
 $distAbs    = Join-Path $RepoRoot $ArchiveDir
-Remove-Item $stagingAbs -Recurse -Force -ErrorAction SilentlyContinue
 New-Item -ItemType Directory -Force $stagingAbs | Out-Null
+Remove-Item $distAbs -Recurse -Force -ErrorAction SilentlyContinue
 New-Item -ItemType Directory -Force $distAbs    | Out-Null
 
 $reportPlugins = @()
@@ -217,14 +219,17 @@ $scriptFiles = @()
 
 foreach ($rel in $manifest.releases) {
     Write-Host "`n=== Release: $($rel.name) ===" -ForegroundColor Cyan
-    $srcReleaseDir = Join-Path $RepoRoot (Join-Path 'build/releases' $rel.name)
-    $stageDir      = Join-Path $stagingAbs $rel.name
+    $stageDir = Join-Path $stagingAbs $rel.name
 
-    # 1. copy committed fomod
-    $fomodSrc = Join-Path $srcReleaseDir 'fomod'
-    if (-not (Test-Path $fomodSrc)) { throw "Missing committed fomod/ for '$($rel.name)' at $fomodSrc" }
-    New-Item -ItemType Directory -Force $stageDir | Out-Null
-    Copy-Item $fomodSrc (Join-Path $stageDir 'fomod') -Recurse -Force
+    # 1. verify the committed fomod/ is in place (it lives directly in build/staging and is never
+    #    wiped by this script - only the derived parts below are regenerated)
+    $fomodDir = Join-Path $stageDir 'fomod'
+    if (-not (Test-Path $fomodDir)) { throw "Missing committed fomod/ for '$($rel.name)' at $fomodDir" }
+
+    # Clear everything else in the stage dir (previous run's .esp/.pex) so stale derived files
+    # from a renamed dest/script never survive into the new archive - fomod/ is left untouched.
+    Get-ChildItem $stageDir -Force | Where-Object { $_.Name -ne 'fomod' } |
+        Remove-Item -Recurse -Force -ErrorAction SilentlyContinue
 
     # 2. deserialize each plugin
     foreach ($p in $rel.plugins) {

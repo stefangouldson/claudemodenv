@@ -27,10 +27,10 @@ Thumbs.db
 !*.esm/
 !*.esl/
 
-# Build output only — the build SCRIPTS (build/build.ps1, build/manifest.json) and the committed
-# FOMOD source under build/releases/<name>/fomod/ stay tracked; just the derived staging tree and
-# packed archives are ignored.
-/build/staging/
+# Build output only — build/staging/<release>/ is NOT ignored: it holds the committed FOMOD source
+# under build/staging/<release>/fomod/, so the tree in git looks like the real installed mod folder.
+# The derived parts inside it (.esp, compiled .pex) are still caught by the *.esp/*.esm/*.esl/*.pex
+# rules below. Only the packed archives are ignored here.
 /build/dist/
 
 # Bethesda archives — large binaries, never commit. Extract scripts with bsa-extract.

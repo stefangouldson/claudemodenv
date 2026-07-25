@@ -149,9 +149,9 @@ the **Example Blade** in your inventory, a forge recipe for it (2 steel ingots +
 perk required), and blacksmith vendors stocking it.
 
 **To start your own mod:** run **`/mod-new-plugin`**, which scaffolds the YAML folder, the manifest
-entry and the FOMOD stub for you. Then delete `src/ExampleMod/`, its `build/releases/Example Mod/` tree,
-its `build/manifest.json` entry and its `.gitignore` exception — or keep it around as a reference
-until you no longer need it.
+entry and the FOMOD stub for you. Then delete `src/ExampleMod/`, the committed
+`build/staging/Example Mod/fomod/` tree, its `build/manifest.json` entry and its `.gitignore`
+exception — or keep it around as a reference until you no longer need it.
 
 ## What is committed vs. ignored
 
@@ -159,14 +159,16 @@ until you no longer need it.
 |-----------------------------------------|----------------------------------------------------------|
 | Your own mod's YAML folder(s)           | Binary plugins (`*.esp/*.esm/*.esl`)                     |
 | Papyrus source `src/<ModName>/Scripts/source/*.psc` | Compiled scripts (`*.pex`)\*, archives (`*.bsa`/`*.ba2`) |
-| `.spriggit`, configs, README, CLAUDE.md | Build output (`dist/`, `build/staging/`, `build/dist/`)  |
-|                                         | Vanilla/third-party reference decompiles (`/reference/`) |
+| Each release's FOMOD stub (`build/staging/<release>/fomod/`) | Build output (`dist/`, `build/dist/`) and the derived `.esp`/`.pex` that `build.ps1` regenerates inside `build/staging/<release>/` |
+| `.spriggit`, configs, README, CLAUDE.md | Vanilla/third-party reference decompiles (`/reference/`) |
 |                                         | Editor/venv (`.vscode/`, `.venv/`)                       |
 
-**You commit source, not build artifacts.** Your mod's YAML folder and
-`src/<ModName>/Scripts/source/*.psc` are the source of truth. Everything derivable from them — the
-`.esp` and the packaged `dist/` mod — is ignored, along with large third-party/vanilla reference
-decompiles.
+**You commit source, not build artifacts.** Your mod's YAML folder, `src/<ModName>/Scripts/source/*.psc`
+and each release's `fomod/` are the source of truth. `build/staging/<release>/` itself is committed
+(so it shows what the actual mod folder looks like), but the `.esp` and `.pex` files `build.ps1`
+generates inside it stay ignored by the blanket `*.esp`/`*.pex` rules — only the `fomod/` subfolder
+is real source there. `dist/` and the packaged `build/dist/*.7z` are ignored the same way, along with
+large third-party/vanilla reference decompiles.
 
 \* **One deliberate exception.** Compiled `.pex` are ignored by default, but a plugin that ships
 scripts opts its `Scripts/compiled/` folder back in through an explicit `.gitignore` rule. CI cannot
@@ -313,9 +315,10 @@ on a free `windows-latest` runner and is driven by **`build/build.ps1`** + **`bu
 (the plugin → release-tree mapping). The build script contains no mod-specific names — everything it
 builds comes from the manifest, so adding a plugin means editing JSON, not PowerShell.
 
-What CI does: download the pinned Spriggit CLI → `deserialize` every plugin's YAML into a clean
-`build/staging/<release>/` (fomod copied from the committed `fomod/`) → copy the committed `.pex`
-into that release's `Scripts/` → `7z` each release into `build/dist/*.7z` → attach the archives to a
+What CI does: download the pinned Spriggit CLI → `deserialize` every plugin's YAML into the
+committed `build/staging/<release>/` (whose `fomod/` subfolder is already checked into git; only
+the derived `.esp`/`.pex` are regenerated) → copy the committed `.pex` into that release's `Scripts/`
+→ `7z` each release into `build/dist/*.7z` → attach the archives to a
 GitHub Release (on `main`: a **pre-release** tagged `build-<UTC-timestamp>`, titled with the UTC
 build time; on a `v*` tag: a normal Release named for the tag) → regenerate `arch-docs/build-report.md`.
 
