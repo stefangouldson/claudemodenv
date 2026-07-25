@@ -335,6 +335,7 @@ Run the same build locally (uses the Spriggit CLI from `tools.json`):
 ```powershell
 pwsh build/build.ps1              # full build -> build/dist/*.7z + arch-docs/build-report.md
 pwsh build/build.ps1 -CheckFomod  # only verify manifest <-> fomod/ModuleConfig.xml parity
+                                  # (also checks installer image paths resolve + aren't progressive JPEGs)
 ```
 
 To release: `git tag v1.0 && git push origin v1.0` → the workflow attaches the archives to a new

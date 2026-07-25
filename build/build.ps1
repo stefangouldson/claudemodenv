@@ -159,6 +159,32 @@ $manifestPath = Join-Path $PSScriptRoot 'manifest.json'
 $manifest = Get-Content $manifestPath -Raw | ConvertFrom-Json
 
 # ---- FOMOD parity check ----------------------------------------------------
+function Get-JpegEncoding {
+    param([string]$Path)
+    # Returns 'baseline' | 'progressive' | 'unknown', or $null when the file is not a JPEG.
+    # Walks the marker segments rather than grepping for FFC2: every marker ahead of the SOS
+    # entropy-coded data carries its own length, so we can step over payloads exactly. A naive
+    # byte search would false-positive on compressed scan data that happens to contain FF C2.
+    try { $bytes = [System.IO.File]::ReadAllBytes($Path) } catch { return $null }
+    if ($bytes.Length -lt 4) { return $null }
+    if ($bytes[0] -ne 0xFF -or $bytes[1] -ne 0xD8) { return $null }   # no SOI => not a JPEG
+    $i = 2
+    while ($i -lt $bytes.Length - 1) {
+        if ($bytes[$i] -ne 0xFF) { return 'unknown' }
+        $marker = $bytes[$i + 1]
+        if ($marker -eq 0xFF) { $i++; continue }                                    # fill byte
+        if ($marker -ge 0xD0 -and $marker -le 0xD9) { $i += 2; continue }           # standalone
+        if ($marker -eq 0xDA) { return 'unknown' }                                  # reached scan data
+        if ($marker -eq 0xC0 -or $marker -eq 0xC1) { return 'baseline' }            # SOF0 / SOF1
+        if ($marker -eq 0xC2) { return 'progressive' }                              # SOF2
+        if ($i + 3 -ge $bytes.Length) { return 'unknown' }
+        $len = ($bytes[$i + 2] -shl 8) -bor $bytes[$i + 3]
+        if ($len -lt 2) { return 'unknown' }
+        $i += 2 + $len
+    }
+    return 'unknown'
+}
+
 function Test-FomodParity {
     $ok = $true
     foreach ($rel in $manifest.releases) {
@@ -189,6 +215,40 @@ function Test-FomodParity {
                 if ($fomodEsps -notcontains $d) {
                     Write-Host "  [NOT IN FOMOD] $($rel.name): manifest builds '$d' but fomod never installs it" -ForegroundColor Yellow
                 }
+            }
+        }
+
+        # Installer images. A bad image reference breaks nothing detectable: the archive builds, the
+        # wizard opens, and MO2 just renders a blank banner - so it costs a full install cycle to
+        # notice. Both failure modes below have actually shipped from this repo. The rest of the
+        # recipe (needing an <installSteps> block at all) is in CLAUDE.md under
+        # "FOMOD images that actually render in MO2".
+        $stageDir = Split-Path -Parent (Split-Path -Parent $fomod)
+        $imageNodes = @($xml.SelectNodes('//moduleImage')) + @($xml.SelectNodes('//image'))
+        # Distinct paths only: one image is typically referenced by both <moduleImage> and every
+        # plugin's <image>, and repeating an identical complaint per node buries the real list.
+        $imagePaths = @($imageNodes | ForEach-Object { $_.GetAttribute('path') } |
+            Where-Object { $_ } | Sort-Object -Unique)
+        foreach ($imgPath in $imagePaths) {
+            # path= is relative to the ARCHIVE ROOT, so it must carry the "fomod/" prefix itself.
+            $relPath = $imgPath.Replace('\', '/').TrimStart('/')
+            $abs = Join-Path $stageDir $relPath
+            if (-not (Test-Path $abs)) {
+                Write-Host "  [IMAGE NOT FOUND] $($rel.name): path=`"$imgPath`" resolves to nothing" -ForegroundColor Red
+                # The overwhelmingly likely cause: the "fomod/" prefix was omitted, because the path
+                # looks right sitting inside fomod/ModuleConfig.xml. Say so instead of just failing.
+                if (Test-Path (Join-Path (Join-Path $stageDir 'fomod') $relPath)) {
+                    Write-Host "                   -> did you mean `"fomod\$($relPath.Replace('/','\'))`"? path= is relative to the archive root, not to fomod/." -ForegroundColor Red
+                }
+                $ok = $false
+                continue
+            }
+            if ($imgPath.Contains('/')) {
+                Write-Host "  [IMAGE PATH SEP] $($rel.name): '$imgPath' uses forward slashes; known-working configs use backslashes" -ForegroundColor Yellow
+            }
+            if ((Get-JpegEncoding $abs) -eq 'progressive') {
+                Write-Host "  [PROGRESSIVE JPEG] $($rel.name): '$imgPath' is a progressive JPEG; re-encode as baseline or PNG" -ForegroundColor Red
+                $ok = $false
             }
         }
     }

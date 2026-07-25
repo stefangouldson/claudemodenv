@@ -194,6 +194,11 @@ That is the pattern to follow: **copy, then edit the deltas.**
   These four were fixed **together** after several one-at-a-time attempts each failed, so which is
   individually decisive is unverified — treat the set as the known-good recipe, and do not drop one
   on the assumption it does not matter.
+
+  `build/build.ps1 -CheckFomod` now enforces points 1, 2 and 4: an unresolvable `path=` or a
+  progressive JPEG **fails** the check (with a "did you mean `fomod\…`?" hint for the missing
+  prefix), and forward slashes warn. It cannot check point 3 — whether an `<installSteps>` block
+  exists at all — because a config legitimately may not want one.
 - **Decompiled `.psc` is a reconstruction** (Champollion): auto-named vars, reconstructed control
   flow, lost comments/flags. Always recompile and test in-game; a clean compile is not proof.
 - **Missing-type compile errors** → the referenced API's source isn't on the import path; add its
