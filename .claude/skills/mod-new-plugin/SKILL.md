@@ -117,6 +117,13 @@ them as records appear. Do not scaffold empty ones.
    </requiredInstallFiles>
    ```
 
+   **If the release ships an installer image**, follow the confirmed-working recipe in CLAUDE.md's
+   "FOMOD images that actually render in MO2" gotcha — archive-root-relative `path=` *including*
+   the `fomod` prefix, backslashes, an `<installSteps>` block even with no real choices, and a
+   baseline (not progressive) JPEG. Copy `build/staging/Example Mod/fomod/ModuleConfig.xml`
+   verbatim and edit the deltas. A wrong image setup still builds and still passes `-CheckFomod`;
+   it just silently renders nothing, so it costs a full install cycle to spot.
+
 6. **Verify before reporting success.** Both must pass:
 
    ```powershell

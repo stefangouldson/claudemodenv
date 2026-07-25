@@ -177,6 +177,23 @@ That is the pattern to follow: **copy, then edit the deltas.**
 
 ## Gotchas
 
+- **FOMOD images that actually render in MO2** — a config can build clean, pass
+  `build.ps1 -CheckFomod`, open its wizard normally, and still show *no image at all*. Nothing
+  warns you. This recipe is confirmed working in MO2 (`Example Mod`'s `fomod/`); copy its shape
+  rather than re-deriving:
+  1. `path=` is relative to the **archive root**, so an image at `fomod/images/foo.jpg` is
+     referenced as `path="fomod\images\foo.jpg"` — *including* the `fomod` prefix.
+  2. Use **backslashes** in `path=`, as the shipped configs do.
+  3. Declare an `<installSteps>` block, even for a mod with no real choices (one
+     `SelectExactlyOne` group holding a single `Recommended` plugin). A config with only
+     `<requiredInstallFiles>` gives MO2 no wizard page to draw the banner on.
+  4. Use a **baseline** JPEG or a PNG, not a progressive JPEG. Check with
+     `od -A d -t x1 -v img.jpg | grep -oE 'ff c[0-9a-f]'`: `ff c0` is baseline (fine), `ff c2` is
+     progressive. Re-encode progressive files via `System.Drawing` before shipping.
+
+  These four were fixed **together** after several one-at-a-time attempts each failed, so which is
+  individually decisive is unverified — treat the set as the known-good recipe, and do not drop one
+  on the assumption it does not matter.
 - **Decompiled `.psc` is a reconstruction** (Champollion): auto-named vars, reconstructed control
   flow, lost comments/flags. Always recompile and test in-game; a clean compile is not proof.
 - **Missing-type compile errors** → the referenced API's source isn't on the import path; add its
