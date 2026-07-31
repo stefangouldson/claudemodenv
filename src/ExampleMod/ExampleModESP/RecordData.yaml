@@ -1,6 +1,6 @@
 SpriggitSource:
   PackageName: Spriggit.Yaml.Skyrim
-  Version: 0.41
+  Version: 0.40
 ModKey: ExampleMod.esp
 GameRelease: SkyrimSE
 ModHeader:

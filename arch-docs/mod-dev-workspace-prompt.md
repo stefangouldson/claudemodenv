@@ -34,7 +34,7 @@ project-specific records until I ask.**
 
 ## Step 0 — Ask me before scaffolding
 1. **Game release?** SkyrimSE (default), SkyrimLE, SkyrimVR, Fallout4, Starfield, Oblivion.
-2. **Spriggit version** installed (e.g. 0.41.0), and CLI or GUI.
+2. **Spriggit version** installed (e.g. 0.40.0), and CLI or GUI.
 3. **First plugin** I'll work on (filename), or "none yet". Is it **ESL/`Small`-flagged**
    (FormID range limited to `0x800–0xFFF`)?
 4. Do I use a **Wabbajack modlist** (which ships the game copy, Creation Kit, Papyrus compiler, xEdit)

@@ -8,7 +8,7 @@ inputs:
   spriggit-version:
     description: Spriggit CLI release to download/cache.
     required: false
-    default: '0.41.0'
+    default: '0.40.0'
   github-token:
     description: Token used by `gh release download` to fetch the Spriggit CLI.
     required: true
@@ -16,14 +16,6 @@ inputs:
 runs:
   using: composite
   steps:
-    # Spriggit fetches its translation package (Spriggit.Yaml.Skyrim) as a dotnet tool at runtime.
-    # From 0.41.0 that package ships tools/net10.0 only, so an older SDK fails the install with a
-    # misleading "DotnetToolSettings.xml was not found in the package". Pin the SDK explicitly.
-    - name: Set up .NET 10 SDK
-      uses: actions/setup-dotnet@v4
-      with:
-        dotnet-version: '10.0.x'
-
     - name: Cache Spriggit CLI
       id: cache-spriggit
       uses: actions/cache@v4

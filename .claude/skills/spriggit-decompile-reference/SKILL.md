@@ -12,7 +12,7 @@ the gitignored `reference/<name>/` folder so you can grep it for FormKeys withou
 
 Paths and Spriggit settings come from `.claude/config/tools.json` (loaded via
 `.claude/config/tools.ps1`): `$Tools.spriggitCli`, and `$Tools.spriggit.{gameRelease,packageName,packageVersion}`
-(defaults `SkyrimSE` / `Spriggit.Yaml.Skyrim` / `0.41.0`).
+(defaults `SkyrimSE` / `Spriggit.Yaml.Skyrim` / `0.40.0`).
 
 ## Inputs to collect
 
