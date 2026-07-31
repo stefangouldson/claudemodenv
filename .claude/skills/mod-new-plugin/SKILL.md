@@ -72,7 +72,7 @@ them as records appear. Do not scaffold empty ones.
    ```json
    {
      "PackageName": "Spriggit.Yaml.Skyrim",
-     "Version": "0.40.0",
+     "Version": "0.41.0",
      "Release": "SkyrimSE",
      "ModKey": "<MyMod.esp>"
    }

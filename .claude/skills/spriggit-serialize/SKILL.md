@@ -11,7 +11,7 @@ Convert a binary plugin into the git-friendly YAML representation.
 
 Paths and Spriggit settings come from `.claude/config/tools.json` (loaded via
 `.claude/config/tools.ps1`). Defaults: GameRelease `SkyrimSE`, PackageName `Spriggit.Yaml.Skyrim`,
-PackageVersion `0.40.0`, CLI at `$Tools.spriggitCli`. To repoint paths, run the **modlist-install**
+PackageVersion `0.41.0`, CLI at `$Tools.spriggitCli`. To repoint paths, run the **modlist-install**
 skill or edit `tools.json`.
 
 ## Inputs to collect

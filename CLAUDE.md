@@ -14,7 +14,7 @@ A Spriggit YAML workspace for **SkyrimSE**. Plugins are decompiled to YAML, edit
 re-packed to `.esp`/`.esm`. **Never hand-edit binary plugins — edit the YAML.**
 
 - Spriggit package/source: `Spriggit.Yaml.Skyrim`
-- Spriggit CLI version: `0.40.0`
+- Spriggit CLI version: `0.41.0`
 - CLI path + all tool paths: `.claude/config/tools.json` (gitignored; see Tooling config below).
 
 ## Tooling config (no hardcoded paths)
@@ -199,6 +199,21 @@ That is the pattern to follow: **copy, then edit the deltas.**
   progressive JPEG **fails** the check (with a "did you mean `fomod\…`?" hint for the missing
   prefix), and forward slashes warn. It cannot check point 3 — whether an `<installSteps>` block
   exists at all — because a config legitimately may not want one.
+- **Spriggit needs a matching .NET *SDK*, and says so incomprehensibly.** `Spriggit.CLI.exe` is
+  self-contained, but it fetches its serializer (`Spriggit.Yaml.Skyrim`) via `dotnet tool install`
+  at runtime. If no installed SDK matches that package's TFM, you get
+  `Settings file 'DotnetToolSettings.xml' was not found in the package` →
+  `Could not locate entry point for: SpriggitModKeyMeta { … }` — which never mentions .NET.
+  **0.41.0 ships `tools/net10.0` only** (0.40.0 was `net9.0`), so it needs the .NET 10 SDK:
+  `winget install Microsoft.DotNet.SDK.10`. SDKs are side-by-side; nothing else breaks. Confirm a
+  version's requirement by listing the nupkg's `tools/` folder from
+  `https://api.nuget.org/v3-flatcontainer/spriggit.yaml.skyrim/<ver>/spriggit.yaml.skyrim.<ver>.nupkg`.
+  A failed fetch is **cached**: delete `%TEMP%\Spriggit\Translations\Spriggit.Yaml.Skyrim\<ver>`
+  before retrying or it fails again with the SDK already installed. CI pins the SDK explicitly in
+  `.github/actions/build-mod-archives/action.yml` — bump that step alongside any Spriggit upgrade.
+- **Spriggit writes CRLF; the repo is LF.** A fresh serialize rewrites every file with CRLF line
+  endings, so a diff against the committed YAML shows whole files as changed even when nothing did.
+  Compare content, not the raw diff, when checking a version upgrade for record-format drift.
 - **Decompiled `.psc` is a reconstruction** (Champollion): auto-named vars, reconstructed control
   flow, lost comments/flags. Always recompile and test in-game; a clean compile is not proof.
 - **Missing-type compile errors** → the referenced API's source isn't on the import path; add its

@@ -12,7 +12,7 @@ anything of your own — see [The example mod](#the-example-mod).
 
 - **Game release:** SkyrimSE
 - **Spriggit package/source:** `Spriggit.Yaml.Skyrim`
-- **Spriggit version:** `0.40.0` (CLI)
+- **Spriggit version:** `0.41.0` (CLI)
 - **Tool paths:** resolved from `.claude/config/tools.json` (gitignored, per-machine) — **no
   hardcoded paths in the skills.** See [Tool config & modlists](#tool-config--modlists) below.
 
@@ -77,7 +77,11 @@ It ships in two flavors:
 
 1. Download a precompiled build from the [Releases page](https://github.com/Mutagen-Modding/Spriggit/releases)
    — grab the CLI zip (or the GUI installer) for the latest version. Unzip it anywhere.
-2. Install the **.NET runtime** if prompted when first running the CLI.
+2. Install the matching **.NET SDK** — not just the runtime. The `.exe` itself is self-contained, but
+   it shells out to `dotnet tool install` for its serializer package (see below), so the SDK whose
+   version matches that package's target framework must be present. **Spriggit 0.41.0 needs the
+   .NET 10 SDK** (`winget install Microsoft.DotNet.SDK.10`); 0.40.0 needed .NET 9. SDKs install
+   side-by-side, so adding a newer one leaves existing ones working.
 3. That's it — there's nothing to register globally. Set the CLI path **once** in
    `.claude/config/tools.json` (`spriggitCli`); every skill reads it from there. If you move or
    upgrade the CLI, edit that one file — not the skills.
@@ -86,6 +90,19 @@ The serializer itself (`Spriggit.Yaml.Skyrim`) is a NuGet package that the CLI f
 You don't install it by hand — the **`.spriggit`** file in this repo pins the package name and
 version, so `deserialize` automatically downloads the exact serializer used to create the YAML.
 This keeps everyone on the team producing byte-identical plugins.
+
+That fetch is a `dotnet tool install`, and it is where a version mismatch bites. If the installed
+SDK is older than the serializer package's target framework, the install fails with the *very*
+misleading:
+
+```
+The settings file in the tool's NuGet package is invalid: Settings file 'DotnetToolSettings.xml' was not found in the package.
+Could not locate entry point for: SpriggitModKeyMeta { Source = Spriggit.Yaml.Skyrim.<version>, ... }
+```
+
+Nothing in that message mentions .NET. It means **install the newer SDK** (0.41.0 ships
+`tools/net10.0` only). After installing, delete the poisoned cache directory
+`%TEMP%\Spriggit\Translations\Spriggit.Yaml.Skyrim\<version>` before retrying.
 
 For the full feature set (GUI walkthrough, merge-conflict tooling, supported games) see the
 [Spriggit repo README](https://github.com/Mutagen-Modding/Spriggit).
@@ -189,7 +206,7 @@ src/<ModName>/<modFolderName>/
 
 File naming is fixed by Spriggit: `<EditorID> - <FormID>_<PluginName>.esp.yaml`.
 
-## Spriggit commands (CLI 0.40.0)
+## Spriggit commands (CLI 0.41.0)
 
 Flags below are verified against the installed version (`Spriggit.CLI.exe serialize --help`).
 Paths/settings come from `.claude/config/tools.json` via `. ".claude/config/tools.ps1"`.
