@@ -20,7 +20,7 @@ concurrency:
   cancel-in-progress: true
 
 env:
-  SPRIGGIT_VERSION: '0.41.0'
+  SPRIGGIT_VERSION: '0.40.0'
   ARTIFACT_NAME: pr-${{ github.event.pull_request.number }}-test-builds
   COMMENT_MARKER: '<!-- pr-test-build -->'
 

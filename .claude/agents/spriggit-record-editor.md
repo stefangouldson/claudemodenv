@@ -10,7 +10,7 @@ never binary plugins**.
 
 ## Workspace facts
 
-- Game: SkyrimSE. Spriggit package/source: `Spriggit.Yaml.Skyrim`, version `0.41.0`.
+- Game: SkyrimSE. Spriggit package/source: `Spriggit.Yaml.Skyrim`, version `0.40.0`.
 - CLI + settings live in `.claude/config/tools.json` (`$Tools.spriggitCli`, `$Tools.spriggit.*`),
   loaded by the Spriggit skills via `.claude/config/tools.ps1` — not hardcoded.
 - Read `CLAUDE.md` and `README.md` at the start of a task — they hold the project's architecture,
