@@ -195,8 +195,8 @@ That is the pattern to follow: **copy, then edit the deltas.**
 
 - **FOMOD images that actually render in MO2** — a config can build clean, pass
   `build.ps1 -CheckFomod`, open its wizard normally, and still show *no image at all*. Nothing
-  warns you. This recipe is confirmed working in MO2 (`Example Mod`'s `fomod/`); copy its shape
-  rather than re-deriving:
+  warns you. This recipe is confirmed working in MO2 — it is kept as `build/fomod-example/`, which
+  is reference material only and belongs to no release; copy its shape rather than re-deriving:
   1. `path=` is relative to the **archive root**, so an image at `fomod/images/foo.jpg` is
      referenced as `path="fomod\images\foo.jpg"` — *including* the `fomod` prefix.
   2. Use **backslashes** in `path=`, as the shipped configs do.

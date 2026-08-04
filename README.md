@@ -148,10 +148,12 @@ In-game you should see, on a new or loaded save: a notification reading *"Exampl
 the **Example Blade** in your inventory, a forge recipe for it (2 steel ingots + 1 leather strip, no
 perk required), and blacksmith vendors stocking it.
 
-**To start your own mod:** run **`/mod-new-plugin`**, which scaffolds the YAML folder, the manifest
-entry and the FOMOD stub for you. Then delete `src/ExampleMod/`, the committed
-`build/staging/Example Mod/fomod/` tree, its `build/manifest.json` entry and its `.gitignore`
-exception — or keep it around as a reference until you no longer need it.
+**To start your own mod:** run **`/mod-new-plugin`**, which scaffolds the YAML folder and the
+manifest entry for you (and a FOMOD only if your install actually has options — a single `.esp` with
+nothing to choose ships as a plain archive via `"fomod": false`). Then delete `src/ExampleMod/`, its
+`build/manifest.json` entry and its `.gitignore` exception — or keep it around as a reference until
+you no longer need it. Leave `build/fomod-example/` alone: it belongs to no release and is the only
+confirmed-working FOMOD image recipe (see the gotcha in `CLAUDE.md`).
 
 ## What is committed vs. ignored
 
@@ -159,7 +161,7 @@ exception — or keep it around as a reference until you no longer need it.
 |-----------------------------------------|----------------------------------------------------------|
 | Your own mod's YAML folder(s)           | Binary plugins (`*.esp/*.esm/*.esl`)                     |
 | Papyrus source `src/<ModName>/Scripts/source/*.psc` | Compiled scripts (`*.pex`)\*, archives (`*.bsa`/`*.ba2`) |
-| Each release's FOMOD stub (`build/staging/<release>/fomod/`) | Build output (`dist/`, `build/dist/`) and the derived `.esp`/`.pex` that `build.ps1` regenerates inside `build/staging/<release>/` |
+| Any release's FOMOD (`build/staging/<release>/fomod/`), plus the `build/fomod-example/` reference | Build output (`dist/`, `build/dist/`) and the derived `.esp`/`.pex` that `build.ps1` regenerates inside `build/staging/<release>/` |
 | `.spriggit`, configs, README, CLAUDE.md | Vanilla/third-party reference decompiles (`/reference/`) |
 |                                         | Editor/venv (`.vscode/`, `.venv/`)                       |
 
@@ -370,7 +372,7 @@ bundle the verified CLI path and flags so you don't retype them.
 | Skill | What it does |
 |-------|--------------|
 | `modlist-install` | Install a `.wabbajack` modlist (gitignored) and auto-discover its tool paths into `tools.json` |
-| `mod-new-plugin` | **Scaffold a new plugin** — YAML folder + manifest entry + FOMOD stub, buildable from the first commit |
+| `mod-new-plugin` | **Scaffold a new plugin** — YAML folder + manifest entry (FOMOD only if the install has options), buildable from the first commit |
 | `spriggit-serialize` | Serialize a plugin → its YAML folder |
 | `spriggit-deserialize` | Rebuild a plugin from its YAML folder (+ xEdit/CK verify reminder) |
 | `spriggit-decompile-reference` | Serialize a vanilla/third-party master into gitignored `reference/` for lookups |
@@ -380,7 +382,6 @@ bundle the verified CLI path and flags so you don't retype them.
 | `papyrus-compile` | Compile `.psc` → `.pex` (CK `PapyrusCompiler.exe`) |
 | `package-mod` | Assemble `dist/<ModName>/` (esp + scripts) for MO2 testing |
 | `mod-deploy` | **Deploy into an MO2 modlist and verify it landed** under the exact expected folder name |
-| `xedit-audit` | Headless xEdit clean + "Check for Errors" pass on a built plugin |
 | `github-release` | Cut a curated `vX.Y.Z` release from the CI-built assets and tidy the `build-*` tags |
 
 **Subagents** (specialized agents with their own context):
